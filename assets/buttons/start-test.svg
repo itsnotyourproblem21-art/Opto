@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="156" height="36" viewBox="0 0 156 36" role="img" aria-labelledby="title">
+  <title>Start Test</title>
+  <defs>
+    <linearGradient id="bg" x1="0" x2="0" y1="0" y2="1">
+      <stop offset="0%" stop-color="#1b75bb" />
+      <stop offset="100%" stop-color="#144c8d" />
+    </linearGradient>
+    <filter id="shadow" x="-10%" y="-50%" width="120%" height="200%">
+      <feOffset dx="0" dy="1" flood-color="#0b315d" flood-opacity="0.35" result="offset" />
+      <feGaussianBlur in="offset" stdDeviation="1.5" result="blur" />
+      <feBlend in="SourceGraphic" in2="blur" mode="normal" />
+    </filter>
+  </defs>
+  <rect x="1.5" y="1.5" width="153" height="33" rx="4.5" fill="#0c3358" opacity="0.45" />
+  <rect x="0" y="0" width="153" height="33" rx="4.5" fill="url(#bg)" filter="url(#shadow)" />
+  <text x="76.5" y="20" fill="#ffffff" font-family="'Segoe UI', Arial, sans-serif" font-size="16" font-weight="600" text-anchor="middle">START TEST</text>
+  <line x1="48" y1="25" x2="105" y2="25" stroke="#c7e3ff" stroke-width="2" stroke-linecap="round" />
+</svg>
