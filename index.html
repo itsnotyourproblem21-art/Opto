@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>General Chemistry Test Toolkit</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <aside class="sidebar" aria-label="Toolkit navigation">
+        <header class="sidebar__header">
+          <span class="sidebar__logo">DAT Prep</span>
+        </header>
+        <nav class="sidebar__nav">
+          <p class="sidebar__section">Practice Tests</p>
+          <ul class="sidebar__list">
+            <li class="sidebar__item sidebar__item--active">
+              <span class="sidebar__pill">General Chemistry</span>
+            </li>
+            <li class="sidebar__item">
+              <span class="sidebar__pill">Biology</span>
+            </li>
+            <li class="sidebar__item">
+              <span class="sidebar__pill">Organic Chemistry</span>
+            </li>
+            <li class="sidebar__item">
+              <span class="sidebar__pill">Quantitative Reasoning</span>
+            </li>
+          </ul>
+          <p class="sidebar__section">Resources</p>
+          <ul class="sidebar__list">
+            <li class="sidebar__item"><span>Formula Sheets</span></li>
+            <li class="sidebar__item"><span>Flashcards</span></li>
+            <li class="sidebar__item"><span>Progress Reports</span></li>
+          </ul>
+        </nav>
+      </aside>
+
+      <main class="workspace" aria-labelledby="page-title">
+        <header class="workspace__header">
+          <div>
+            <p class="workspace__breadcrumb">Home &rsaquo; General Chemistry</p>
+            <h1 class="workspace__title" id="page-title">General Chemistry Toolkit</h1>
+            <p class="workspace__subtitle">
+              Launch your calculator and periodic table from the Exhibit button during
+              any practice test session.
+            </p>
+          </div>
+        </header>
+
+        <div class="workspace__grid">
+          <section class="panel calculator-panel" aria-labelledby="calculator-title">
+            <div class="calculator" data-calculator>
+              <header class="calculator__title-bar">
+                <h2 class="calculator__title" id="calculator-title">DAT Calculator</h2>
+                <div class="calculator__title-actions" aria-hidden="true">
+                  <span class="calculator__title-btn calculator__title-btn--minimize"></span>
+                  <span class="calculator__title-btn calculator__title-btn--maximize"></span>
+                  <span class="calculator__title-btn calculator__title-btn--close"></span>
+                </div>
+              </header>
+              <div class="calculator__display-wrapper">
+                <div class="calculator__memory-status" aria-live="polite" data-calculator-memory></div>
+                <output
+                  class="calculator__display"
+                  id="calculator-display"
+                  role="status"
+                  aria-live="polite"
+                  data-calculator-display
+                >0</output>
+              </div>
+              <div class="calculator__keypad" id="calculator-keys" data-calculator-keys></div>
+            </div>
+          </section>
+
+          <section class="panel tests-panel" aria-labelledby="tests-title">
+            <header class="panel__header">
+              <h2 class="panel__title" id="tests-title">Practice Tests</h2>
+              <p class="panel__subtitle">
+                Exhibit buttons open the updated periodic table in an accessible modal.
+              </p>
+            </header>
+
+            <div class="tests-list">
+              <article class="test-card">
+                <header>
+                  <h3 class="test-card__title">General Chemistry Test A</h3>
+                  <p class="test-card__meta">55 minutes &middot; 40 questions</p>
+                </header>
+                <div class="test-card__actions">
+                  <button
+                    type="button"
+                    class="button button--primary"
+                    data-exhibit-trigger
+                    data-exhibit-target="periodic-table-modal"
+                  >
+                    Exhibit
+                  </button>
+                  <button type="button" class="button button--secondary">Start</button>
+                </div>
+              </article>
+
+              <article class="test-card">
+                <header>
+                  <h3 class="test-card__title">General Chemistry Test B</h3>
+                  <p class="test-card__meta">60 minutes &middot; 42 questions</p>
+                </header>
+                <div class="test-card__actions">
+                  <button
+                    type="button"
+                    class="button button--primary"
+                    data-exhibit-trigger
+                    data-exhibit-target="periodic-table-modal"
+                  >
+                    Exhibit
+                  </button>
+                  <button type="button" class="button button--secondary">Start</button>
+                </div>
+              </article>
+
+              <article class="test-card">
+                <header>
+                  <h3 class="test-card__title">Mixed Question Bank</h3>
+                  <p class="test-card__meta">Practice by topic &middot; Adaptive</p>
+                </header>
+                <div class="test-card__actions">
+                  <button
+                    type="button"
+                    class="button button--primary"
+                    data-exhibit-trigger
+                    data-exhibit-target="periodic-table-modal"
+                  >
+                    Exhibit
+                  </button>
+                  <button type="button" class="button button--secondary">Review</button>
+                </div>
+              </article>
+            </div>
+          </section>
+        </div>
+      </main>
+    </div>
+
+    <div
+      class="modal"
+      id="periodic-table-modal"
+      role="dialog"
+      aria-modal="true"
+      aria-hidden="true"
+      tabindex="-1"
+    >
+      <div class="modal__dialog">
+        <header class="modal__header">
+          <h2 class="modal__title">Periodic Table of the Elements</h2>
+          <button type="button" class="modal__close" data-exhibit-dismiss aria-label="Close exhibit">&times;</button>
+        </header>
+        <div class="modal__body">
+          <div class="periodic-table" id="periodic-table" role="table"></div>
+          <footer class="periodic-table__constants">
+            <div>
+              <p><strong>Avogadro's number</strong> N<sub>A</sub> = 6.02 &times; 10<sup>23</sup> mol<sup>-1</sup></p>
+              <p><strong>Faraday constant</strong> F = 96,500 C/mol</p>
+              <p><strong>Planck's constant</strong> h = 6.63 &times; 10<sup>-34</sup> J·s</p>
+            </div>
+            <div>
+              <p><strong>Speed of light</strong> c = 3.00 &times; 10<sup>8</sup> m/s</p>
+              <p><strong>Universal gas constant</strong> R = 8.314 J/(mol·K)</p>
+              <p><strong>Gas constant</strong> R = 0.08206 (atm·L)/(mol·K)</p>
+            </div>
+          </footer>
+        </div>
+      </div>
+    </div>
+
+    <script src="script.js" defer></script>
+  </body>
+</html>
