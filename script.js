@@ -1,655 +1,862 @@
-const calculatorKeyLayout = [
-  { label: "MC", action: "memory-clear", row: 1, column: 1 },
-  { label: "MR", action: "memory-recall", row: 1, column: 2 },
-  { label: "MS", action: "memory-store", row: 1, column: 3 },
-  { label: "M+", action: "memory-add", row: 1, column: 4 },
-  { label: "Backspace", action: "backspace", row: 2, column: 1 },
-  { label: "CE", action: "clear-entry", row: 2, column: 2 },
-  { label: "CA", action: "clear-all", row: 2, column: 3 },
-  { label: "/", action: "operator", value: "/", row: 2, column: 4 },
-  { label: "sqrt", action: "sqrt", row: 2, column: 5 },
-  { label: "7", action: "digit", value: "7", row: 3, column: 1 },
-  { label: "8", action: "digit", value: "8", row: 3, column: 2 },
-  { label: "9", action: "digit", value: "9", row: 3, column: 3 },
-  { label: "*", action: "operator", value: "*", row: 3, column: 4 },
-  { label: "%", action: "percent", row: 3, column: 5 },
-  { label: "4", action: "digit", value: "4", row: 4, column: 1 },
-  { label: "5", action: "digit", value: "5", row: 4, column: 2 },
-  { label: "6", action: "digit", value: "6", row: 4, column: 3 },
-  { label: "-", action: "operator", value: "-", row: 4, column: 4 },
-  { label: "1/x", action: "reciprocal", row: 4, column: 5 },
-  { label: "1", action: "digit", value: "1", row: 5, column: 1 },
-  { label: "2", action: "digit", value: "2", row: 5, column: 2 },
-  { label: "3", action: "digit", value: "3", row: 5, column: 3 },
-  { label: "+", action: "operator", value: "+", row: 5, column: 4 },
-  { label: "=", action: "equals", row: 5, column: 5, rowSpan: 2 },
-  { label: "0", action: "digit", value: "0", row: 6, column: 1, columnSpan: 2 },
-  { label: "+/-", action: "sign", row: 6, column: 3 },
-  { label: ".", action: "decimal", row: 6, column: 4 }
-];
+const STORAGE_KEY = "oat_rc_sample_exam_user_state_v1";
 
-const periodicMainElements = [
-  { number: 1, symbol: "H", name: "Hydrogen", row: 1, column: 1 },
-  { number: 2, symbol: "He", name: "Helium", row: 1, column: 18 },
-  { number: 3, symbol: "Li", name: "Lithium", row: 2, column: 1 },
-  { number: 4, symbol: "Be", name: "Beryllium", row: 2, column: 2 },
-  { number: 5, symbol: "B", name: "Boron", row: 2, column: 13 },
-  { number: 6, symbol: "C", name: "Carbon", row: 2, column: 14 },
-  { number: 7, symbol: "N", name: "Nitrogen", row: 2, column: 15 },
-  { number: 8, symbol: "O", name: "Oxygen", row: 2, column: 16 },
-  { number: 9, symbol: "F", name: "Fluorine", row: 2, column: 17 },
-  { number: 10, symbol: "Ne", name: "Neon", row: 2, column: 18 },
-  { number: 11, symbol: "Na", name: "Sodium", row: 3, column: 1 },
-  { number: 12, symbol: "Mg", name: "Magnesium", row: 3, column: 2 },
-  { number: 13, symbol: "Al", name: "Aluminum", row: 3, column: 13 },
-  { number: 14, symbol: "Si", name: "Silicon", row: 3, column: 14 },
-  { number: 15, symbol: "P", name: "Phosphorus", row: 3, column: 15 },
-  { number: 16, symbol: "S", name: "Sulfur", row: 3, column: 16 },
-  { number: 17, symbol: "Cl", name: "Chlorine", row: 3, column: 17 },
-  { number: 18, symbol: "Ar", name: "Argon", row: 3, column: 18 },
-  { number: 19, symbol: "K", name: "Potassium", row: 4, column: 1 },
-  { number: 20, symbol: "Ca", name: "Calcium", row: 4, column: 2 },
-  { number: 21, symbol: "Sc", name: "Scandium", row: 4, column: 3 },
-  { number: 22, symbol: "Ti", name: "Titanium", row: 4, column: 4 },
-  { number: 23, symbol: "V", name: "Vanadium", row: 4, column: 5 },
-  { number: 24, symbol: "Cr", name: "Chromium", row: 4, column: 6 },
-  { number: 25, symbol: "Mn", name: "Manganese", row: 4, column: 7 },
-  { number: 26, symbol: "Fe", name: "Iron", row: 4, column: 8 },
-  { number: 27, symbol: "Co", name: "Cobalt", row: 4, column: 9 },
-  { number: 28, symbol: "Ni", name: "Nickel", row: 4, column: 10 },
-  { number: 29, symbol: "Cu", name: "Copper", row: 4, column: 11 },
-  { number: 30, symbol: "Zn", name: "Zinc", row: 4, column: 12 },
-  { number: 31, symbol: "Ga", name: "Gallium", row: 4, column: 13 },
-  { number: 32, symbol: "Ge", name: "Germanium", row: 4, column: 14 },
-  { number: 33, symbol: "As", name: "Arsenic", row: 4, column: 15 },
-  { number: 34, symbol: "Se", name: "Selenium", row: 4, column: 16 },
-  { number: 35, symbol: "Br", name: "Bromine", row: 4, column: 17 },
-  { number: 36, symbol: "Kr", name: "Krypton", row: 4, column: 18 },
-  { number: 37, symbol: "Rb", name: "Rubidium", row: 5, column: 1 },
-  { number: 38, symbol: "Sr", name: "Strontium", row: 5, column: 2 },
-  { number: 39, symbol: "Y", name: "Yttrium", row: 5, column: 3 },
-  { number: 40, symbol: "Zr", name: "Zirconium", row: 5, column: 4 },
-  { number: 41, symbol: "Nb", name: "Niobium", row: 5, column: 5 },
-  { number: 42, symbol: "Mo", name: "Molybdenum", row: 5, column: 6 },
-  { number: 43, symbol: "Tc", name: "Technetium", row: 5, column: 7 },
-  { number: 44, symbol: "Ru", name: "Ruthenium", row: 5, column: 8 },
-  { number: 45, symbol: "Rh", name: "Rhodium", row: 5, column: 9 },
-  { number: 46, symbol: "Pd", name: "Palladium", row: 5, column: 10 },
-  { number: 47, symbol: "Ag", name: "Silver", row: 5, column: 11 },
-  { number: 48, symbol: "Cd", name: "Cadmium", row: 5, column: 12 },
-  { number: 49, symbol: "In", name: "Indium", row: 5, column: 13 },
-  { number: 50, symbol: "Sn", name: "Tin", row: 5, column: 14 },
-  { number: 51, symbol: "Sb", name: "Antimony", row: 5, column: 15 },
-  { number: 52, symbol: "Te", name: "Tellurium", row: 5, column: 16 },
-  { number: 53, symbol: "I", name: "Iodine", row: 5, column: 17 },
-  { number: 54, symbol: "Xe", name: "Xenon", row: 5, column: 18 },
-  { number: 55, symbol: "Cs", name: "Cesium", row: 6, column: 1 },
-  { number: 56, symbol: "Ba", name: "Barium", row: 6, column: 2 },
-  { number: 72, symbol: "Hf", name: "Hafnium", row: 6, column: 4 },
-  { number: 73, symbol: "Ta", name: "Tantalum", row: 6, column: 5 },
-  { number: 74, symbol: "W", name: "Tungsten", row: 6, column: 6 },
-  { number: 75, symbol: "Re", name: "Rhenium", row: 6, column: 7 },
-  { number: 76, symbol: "Os", name: "Osmium", row: 6, column: 8 },
-  { number: 77, symbol: "Ir", name: "Iridium", row: 6, column: 9 },
-  { number: 78, symbol: "Pt", name: "Platinum", row: 6, column: 10 },
-  { number: 79, symbol: "Au", name: "Gold", row: 6, column: 11 },
-  { number: 80, symbol: "Hg", name: "Mercury", row: 6, column: 12 },
-  { number: 81, symbol: "Tl", name: "Thallium", row: 6, column: 13 },
-  { number: 82, symbol: "Pb", name: "Lead", row: 6, column: 14 },
-  { number: 83, symbol: "Bi", name: "Bismuth", row: 6, column: 15 },
-  { number: 84, symbol: "Po", name: "Polonium", row: 6, column: 16 },
-  { number: 85, symbol: "At", name: "Astatine", row: 6, column: 17 },
-  { number: 86, symbol: "Rn", name: "Radon", row: 6, column: 18 },
-  { number: 87, symbol: "Fr", name: "Francium", row: 7, column: 1 },
-  { number: 88, symbol: "Ra", name: "Radium", row: 7, column: 2 },
-  { number: 104, symbol: "Rf", name: "Rutherfordium", row: 7, column: 4 },
-  { number: 105, symbol: "Db", name: "Dubnium", row: 7, column: 5 },
-  { number: 106, symbol: "Sg", name: "Seaborgium", row: 7, column: 6 },
-  { number: 107, symbol: "Bh", name: "Bohrium", row: 7, column: 7 },
-  { number: 108, symbol: "Hs", name: "Hassium", row: 7, column: 8 },
-  { number: 109, symbol: "Mt", name: "Meitnerium", row: 7, column: 9 },
-  { number: 110, symbol: "Ds", name: "Darmstadtium", row: 7, column: 10 },
-  { number: 111, symbol: "Rg", name: "Roentgenium", row: 7, column: 11 },
-  { number: 112, symbol: "Cn", name: "Copernicium", row: 7, column: 12 },
-  { number: 113, symbol: "Nh", name: "Nihonium", row: 7, column: 13 },
-  { number: 114, symbol: "Fl", name: "Flerovium", row: 7, column: 14 },
-  { number: 115, symbol: "Mc", name: "Moscovium", row: 7, column: 15 },
-  { number: 116, symbol: "Lv", name: "Livermorium", row: 7, column: 16 },
-  { number: 117, symbol: "Ts", name: "Tennessine", row: 7, column: 17 },
-  { number: 118, symbol: "Og", name: "Oganesson", row: 7, column: 18 }
-];
-
-const periodicLanthanides = [
-  { number: 57, symbol: "La", name: "Lanthanum", row: 8, column: 4 },
-  { number: 58, symbol: "Ce", name: "Cerium", row: 8, column: 5 },
-  { number: 59, symbol: "Pr", name: "Praseodymium", row: 8, column: 6 },
-  { number: 60, symbol: "Nd", name: "Neodymium", row: 8, column: 7 },
-  { number: 61, symbol: "Pm", name: "Promethium", row: 8, column: 8 },
-  { number: 62, symbol: "Sm", name: "Samarium", row: 8, column: 9 },
-  { number: 63, symbol: "Eu", name: "Europium", row: 8, column: 10 },
-  { number: 64, symbol: "Gd", name: "Gadolinium", row: 8, column: 11 },
-  { number: 65, symbol: "Tb", name: "Terbium", row: 8, column: 12 },
-  { number: 66, symbol: "Dy", name: "Dysprosium", row: 8, column: 13 },
-  { number: 67, symbol: "Ho", name: "Holmium", row: 8, column: 14 },
-  { number: 68, symbol: "Er", name: "Erbium", row: 8, column: 15 },
-  { number: 69, symbol: "Tm", name: "Thulium", row: 8, column: 16 },
-  { number: 70, symbol: "Yb", name: "Ytterbium", row: 8, column: 17 },
-  { number: 71, symbol: "Lu", name: "Lutetium", row: 8, column: 18 }
-];
-
-const periodicActinides = [
-  { number: 89, symbol: "Ac", name: "Actinium", row: 9, column: 4 },
-  { number: 90, symbol: "Th", name: "Thorium", row: 9, column: 5 },
-  { number: 91, symbol: "Pa", name: "Protactinium", row: 9, column: 6 },
-  { number: 92, symbol: "U", name: "Uranium", row: 9, column: 7 },
-  { number: 93, symbol: "Np", name: "Neptunium", row: 9, column: 8 },
-  { number: 94, symbol: "Pu", name: "Plutonium", row: 9, column: 9 },
-  { number: 95, symbol: "Am", name: "Americium", row: 9, column: 10 },
-  { number: 96, symbol: "Cm", name: "Curium", row: 9, column: 11 },
-  { number: 97, symbol: "Bk", name: "Berkelium", row: 9, column: 12 },
-  { number: 98, symbol: "Cf", name: "Californium", row: 9, column: 13 },
-  { number: 99, symbol: "Es", name: "Einsteinium", row: 9, column: 14 },
-  { number: 100, symbol: "Fm", name: "Fermium", row: 9, column: 15 },
-  { number: 101, symbol: "Md", name: "Mendelevium", row: 9, column: 16 },
-  { number: 102, symbol: "No", name: "Nobelium", row: 9, column: 17 },
-  { number: 103, symbol: "Lr", name: "Lawrencium", row: 9, column: 18 }
-];
-
-const periodicBridgeCells = [
-  { label: "57-71", caption: "La-Lu", row: 6, column: 3 },
-  { label: "89-103", caption: "Ac-Lr", row: 7, column: 3 }
-];
-
-const periodicRowLabels = [
-  { text: "Lanthanides", row: 8, columnStart: 1, columnSpan: 3 },
-  { text: "Actinides", row: 9, columnStart: 1, columnSpan: 3 }
-];
-
-class Calculator {
-  constructor(display) {
-    this.display = display;
-    this.reset();
+const PASSAGES = {
+  epigenetics: {
+    title: "Passage 1",
+    content: [
+      "(1) For decades, biologists believed that DNA sequence alone determined an organism's traits. This view, known as genetic determinism, has since given way to a more nuanced understanding: that environmental factors can regulate how genes are expressed without altering the underlying DNA code. This process is called epigenetics, meaning \"above genetics,\" and it has transformed modern biology by revealing that identical genetic sequences can lead to vastly different outcomes depending on which genes are turned on or off. Researchers now know that the environment, nutrition, and even early developmental experiences can leave molecular marks that influence health and disease risk throughout life.",
+      "(2) The foundation of epigenetic regulation lies in chemical modifications to DNA and the histone proteins around which it is wrapped. The most well-known of these modifications is DNA methylation, where methyl groups attach to cytosine bases, typically silencing the associated gene. Histone acetylation, on the other hand, tends to loosen chromatin structure, promoting transcriptional activity. Together, these molecular marks form a dynamic \"epigenetic code\" that determines the accessibility of genes for transcription.",
+      "(3) One of the most striking examples of epigenetics is the Agouti mouse. These mice are genetically identical, but their coat color and health outcomes vary dramatically based on their mother's diet during gestation. A diet rich in methyl donors (like folic acid) leads to increased DNA methylation of the Agouti gene, resulting in brown, healthy pups. A diet deficient in these nutrients fails to silence the gene, leading to yellow, obese pups prone to diabetes and cancer. This demonstrates a direct, heritable link between a specific environmental input (nutrition) and long-term gene expression.",
+      "(4) The clinical implications of epigenetic research are vast. Since epigenetic changes are reversible, unlike DNA mutations, they represent promising targets for new therapeutic drugs, particularly in oncology. Drugs known as HDAC inhibitors (Histone Deacetylase inhibitors) and DNMT inhibitors (DNA Methyltransferase inhibitors) are currently in clinical trials to reactivate silenced tumor suppressor genes or modify the expression profile of cancer cells.",
+      "(5) Furthermore, the field of behavioral epigenetics explores how external stressors and experiences, such as early life trauma or enriched environments, can affect gene expression in the brain. These changes, mediated by modifications to neural chromatin structure, may help explain individual differences in vulnerability to mental health disorders like depression and PTSD, providing a molecular link between nature and nurture that extends beyond simple Mendelian inheritance.",
+      "(6) In summary, epigenetics moves beyond the simple one-way street of DNA controlling life to reveal a complex, dynamic interplay where the environment constantly shapes gene function. This paradigm shift offers new avenues for understanding, diagnosing, and treating a wide array of human diseases, cementing its role as one of the most exciting frontiers in biological science today."
+    ]
   }
+};
 
-  reset() {
-    this.displayValue = "0";
-    this.firstOperand = null;
-    this.operator = null;
-    this.waitingForSecondOperand = false;
-    this.memory = 0;
-    this.error = false;
-    this.updateDisplay();
+const QUESTIONS = [
+  {
+    passageId: "epigenetics",
+    stem: "According to the passage, histone acetylation tends to",
+    c: [
+      "tighten chromatin structure",
+      "prevent transcription",
+      "loosen chromatin structure, promoting transcriptional activity",
+      "cause DNA damage"
+    ],
+    a: 2
+  },
+  {
+    passageId: "epigenetics",
+    stem: "The main idea of the first paragraph is to",
+    c: [
+      "define genetic determinism as the accepted modern view",
+      "introduce epigenetics as a process modifying DNA sequence",
+      "explain that environment and experiences can regulate gene expression",
+      "list the specific molecular marks that influence health"
+    ],
+    a: 2
+  },
+  {
+    passageId: "epigenetics",
+    stem: "Which of the following processes is described as 'typically silencing the associated gene'?",
+    c: ["Histone acetylation", "DNA methylation", "Transcriptional activity", "Genetic determinism"],
+    a: 1
+  },
+  {
+    passageId: "epigenetics",
+    stem: "The Agouti mouse example primarily illustrates",
+    c: [
+      "the process of histone acetylation",
+      "that identical genetic sequences always lead to the same outcome",
+      "that genetic determinism is the most accurate model for coat color",
+      "a direct link between maternal nutrition and epigenetic gene regulation"
+    ],
+    a: 3
+  },
+  {
+    passageId: "epigenetics",
+    stem: "The author's tone in this passage can best be described as",
+    c: ["skeptical and critical", "informal and humorous", "informative and objective", "argumentative and biased"],
+    a: 2
+  },
+  {
+    passageId: "epigenetics",
+    stem: "The term 'epigenetic code' in paragraph 2 refers to the",
+    c: [
+      "sequence of DNA nucleotides",
+      "combination of molecular marks that regulate gene accessibility",
+      "set of all genes in an organism's genome",
+      "specific diet of an Agouti mouse's mother"
+    ],
+    a: 1
   }
+];
 
-  clearEntry() {
-    this.displayValue = "0";
-    this.error = false;
-    this.updateDisplay();
-  }
+const pad = (n) => String(n).padStart(2, "0");
+const fmtMMSS = (seconds) => `${pad(Math.max(0, Math.floor(seconds / 60)))}:${pad(Math.max(0, seconds % 60))}`;
 
-  clearAll() {
-    this.reset();
-  }
+const root = document.getElementById("rc-app");
 
-  inputDigit(digit) {
-    if (this.error) {
-      this.displayValue = digit;
-      this.error = false;
-      this.updateDisplay();
+let state = {
+  current: 0,
+  answers: {},
+  marked: {},
+  view: "intro",
+  delayOn: true,
+  accom: false,
+  timeLeft: null
+};
+
+let delayHandles = [];
+let timerHandle = null;
+
+function cloneState(value) {
+  return {
+    ...value,
+    answers: { ...value.answers },
+    marked: { ...value.marked }
+  };
+}
+
+function loadProgress() {
+  try {
+    const raw = window.localStorage.getItem(STORAGE_KEY);
+    if (!raw) {
       return;
     }
-
-    if (this.waitingForSecondOperand) {
-      this.displayValue = digit;
-      this.waitingForSecondOperand = false;
-    } else {
-      if (this.displayValue === "0") {
-        this.displayValue = digit;
-      } else if (this.displayValue === "-0") {
-        this.displayValue = `-${digit}`;
-      } else {
-        this.displayValue += digit;
+    const parsed = JSON.parse(raw);
+    if (parsed && typeof parsed === "object") {
+      if (parsed.answers && typeof parsed.answers === "object") {
+        state.answers = parsed.answers;
+      }
+      if (parsed.marked && typeof parsed.marked === "object") {
+        state.marked = parsed.marked;
       }
     }
-
-    this.updateDisplay();
-  }
-
-  inputDecimal() {
-    if (this.error) {
-      this.displayValue = "0.";
-      this.error = false;
-      this.updateDisplay();
-      return;
-    }
-
-    if (this.waitingForSecondOperand) {
-      this.displayValue = "0.";
-      this.waitingForSecondOperand = false;
-    } else if (!this.displayValue.includes(".")) {
-      this.displayValue += ".";
-    }
-
-    this.updateDisplay();
-  }
-
-  toggleSign() {
-    if (this.error) {
-      return;
-    }
-
-    if (this.displayValue.startsWith("-")) {
-      this.displayValue = this.displayValue.slice(1);
-    } else if (this.displayValue !== "0") {
-      this.displayValue = `-${this.displayValue}`;
-    }
-
-    this.updateDisplay();
-  }
-
-  setOperator(nextOperator) {
-    if (this.error) {
-      this.error = false;
-      this.operator = nextOperator;
-      this.firstOperand = 0;
-      this.waitingForSecondOperand = true;
-      return;
-    }
-
-    const inputValue = parseFloat(this.displayValue);
-
-    if (Number.isNaN(inputValue)) {
-      return;
-    }
-
-    if (this.operator && this.waitingForSecondOperand) {
-      this.operator = nextOperator;
-      return;
-    }
-
-    if (this.firstOperand === null) {
-      this.firstOperand = inputValue;
-    } else if (this.operator) {
-      const result = this.performCalculation(this.operator, this.firstOperand, inputValue);
-      if (result === null) {
-        this.signalError();
-        return;
-      }
-      this.firstOperand = result;
-      this.displayValue = this.formatNumber(result);
-    }
-
-    this.operator = nextOperator;
-    this.waitingForSecondOperand = true;
-    this.updateDisplay();
-  }
-
-  calculateResult() {
-    if (this.operator === null || this.waitingForSecondOperand) {
-      return;
-    }
-
-    const secondOperand = parseFloat(this.displayValue);
-
-    const result = this.performCalculation(this.operator, this.firstOperand, secondOperand);
-    if (result === null) {
-      this.signalError();
-      return;
-    }
-
-    this.displayValue = this.formatNumber(result);
-    this.firstOperand = result;
-    this.operator = null;
-    this.waitingForSecondOperand = false;
-    this.updateDisplay();
-  }
-
-  performCalculation(operator, firstOperand, secondOperand) {
-    switch (operator) {
-      case "+":
-        return firstOperand + secondOperand;
-      case "-":
-        return firstOperand - secondOperand;
-      case "*":
-        return firstOperand * secondOperand;
-      case "/":
-        if (secondOperand === 0) {
-          return null;
-        }
-        return firstOperand / secondOperand;
-      default:
-        return secondOperand;
-    }
-  }
-
-  percent() {
-    if (this.error) {
-      return;
-    }
-
-    const current = parseFloat(this.displayValue);
-    if (Number.isNaN(current)) {
-      return;
-    }
-
-    let value = current / 100;
-    if (this.firstOperand !== null && !this.waitingForSecondOperand) {
-      value = (this.firstOperand * current) / 100;
-    }
-
-    this.displayValue = this.formatNumber(value);
-    this.updateDisplay();
-  }
-
-  squareRoot() {
-    if (this.error) {
-      return;
-    }
-
-    const current = parseFloat(this.displayValue);
-    if (current < 0) {
-      this.signalError();
-      return;
-    }
-
-    const value = Math.sqrt(current);
-    this.displayValue = this.formatNumber(value);
-    this.waitingForSecondOperand = false;
-    this.updateDisplay();
-  }
-
-  reciprocal() {
-    if (this.error) {
-      return;
-    }
-
-    const current = parseFloat(this.displayValue);
-    if (current === 0) {
-      this.signalError();
-      return;
-    }
-
-    const value = 1 / current;
-    this.displayValue = this.formatNumber(value);
-    this.waitingForSecondOperand = false;
-    this.updateDisplay();
-  }
-
-  backspace() {
-    if (this.error) {
-      this.displayValue = "0";
-      this.error = false;
-      this.updateDisplay();
-      return;
-    }
-
-    if (this.waitingForSecondOperand) {
-      this.displayValue = "0";
-      this.waitingForSecondOperand = false;
-    } else {
-      if (this.displayValue.length > 1) {
-        this.displayValue = this.displayValue.slice(0, -1);
-        if (this.displayValue === "-") {
-          this.displayValue = "0";
-        }
-      } else {
-        this.displayValue = "0";
-      }
-    }
-
-    this.updateDisplay();
-  }
-
-  memoryStore() {
-    if (this.error) {
-      return;
-    }
-
-    const value = parseFloat(this.displayValue);
-    if (!Number.isNaN(value)) {
-      this.memory = value;
-    }
-  }
-
-  memoryRecall() {
-    this.displayValue = this.formatNumber(this.memory);
-    this.waitingForSecondOperand = false;
-    this.error = false;
-    this.updateDisplay();
-  }
-
-  memoryClear() {
-    this.memory = 0;
-  }
-
-  memoryAdd() {
-    if (this.error) {
-      return;
-    }
-
-    const value = parseFloat(this.displayValue);
-    if (!Number.isNaN(value)) {
-      this.memory += value;
-    }
-  }
-
-  signalError() {
-    this.displayValue = "Error";
-    this.error = true;
-    this.firstOperand = null;
-    this.operator = null;
-    this.waitingForSecondOperand = false;
-    this.updateDisplay();
-  }
-
-  formatNumber(value) {
-    if (!Number.isFinite(value)) {
-      return "Error";
-    }
-
-    const absValue = Math.abs(value);
-    if ((absValue !== 0 && (absValue >= 1e10 || absValue < 1e-6))) {
-      return value.toExponential(6).replace(/\+/, "");
-    }
-
-    const formatted = parseFloat(value.toFixed(10)).toString();
-    return formatted.length > 14 ? value.toExponential(6).replace(/\+/, "") : formatted;
-  }
-
-  updateDisplay() {
-    this.display.textContent = this.displayValue;
+  } catch (error) {
+    console.error("Failed to load saved progress", error);
   }
 }
 
-function renderCalculatorKeys(container) {
-  const fragment = document.createDocumentFragment();
-
-  calculatorKeyLayout.forEach((config) => {
-    const button = document.createElement("button");
-    button.type = "button";
-    button.className = "calculator__key";
-    button.textContent = config.label;
-    button.dataset.action = config.action;
-    if (config.value !== undefined) {
-      button.dataset.value = config.value;
-    }
-
-    const columnSpan = config.columnSpan || 1;
-    const rowSpan = config.rowSpan || 1;
-    button.style.gridColumn = `${config.column} / span ${columnSpan}`;
-    button.style.gridRow = `${config.row} / span ${rowSpan}`;
-    fragment.appendChild(button);
-  });
-
-  container.appendChild(fragment);
+function saveProgress() {
+  try {
+    const payload = {
+      answers: state.answers,
+      marked: state.marked
+    };
+    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
+  } catch (error) {
+    console.error("Failed to save progress", error);
+  }
 }
 
-function renderPeriodicTable(container) {
-  const fragment = document.createDocumentFragment();
+function clearDelays() {
+  delayHandles.forEach((handle) => window.clearTimeout(handle));
+  delayHandles = [];
+}
 
-  periodicRowLabels.forEach((label) => {
-    const labelEl = document.createElement("div");
-    labelEl.className = "periodic-table__label";
-    labelEl.textContent = label.text;
-    labelEl.style.gridColumn = `${label.columnStart} / span ${label.columnSpan}`;
-    labelEl.style.gridRow = label.row;
-    fragment.appendChild(labelEl);
+function scheduleAction(callback) {
+  if (!state.delayOn) {
+    callback();
+    return;
+  }
+  const handle = window.setTimeout(() => {
+    callback();
+    delayHandles = delayHandles.filter((id) => id !== handle);
+  }, 2000);
+  delayHandles.push(handle);
+}
+
+function scheduleTick() {
+  if (timerHandle) {
+    window.clearTimeout(timerHandle);
+    timerHandle = null;
+  }
+
+  if (state.view !== "test" || typeof state.timeLeft !== "number") {
+    return;
+  }
+
+  if (state.timeLeft <= 0) {
+    if (state.view !== "results") {
+      updateState((prev) => {
+        const next = cloneState(prev);
+        next.timeLeft = 0;
+        next.view = "results";
+        return next;
+      });
+    }
+    return;
+  }
+
+  timerHandle = window.setTimeout(() => {
+    if (state.view !== "test") {
+      return;
+    }
+    updateState((prev) => {
+      const next = cloneState(prev);
+      if (typeof next.timeLeft === "number") {
+        next.timeLeft = Math.max(0, next.timeLeft - 1);
+        if (next.timeLeft === 0) {
+          next.view = "results";
+        }
+      }
+      return next;
+    });
+  }, 1000);
+}
+
+function updateState(updater) {
+  const previous = state;
+  const nextState =
+    typeof updater === "function"
+      ? updater(cloneState(state))
+      : {
+          ...cloneState(state),
+          ...updater
+        };
+
+  if (!nextState) {
+    return;
+  }
+
+  const answersChanged = previous.answers !== nextState.answers;
+  const markedChanged = previous.marked !== nextState.marked;
+
+  state = nextState;
+
+  if (answersChanged || markedChanged) {
+    saveProgress();
+  }
+
+  render();
+  scheduleTick();
+}
+
+function calcScore() {
+  let correct = 0;
+  QUESTIONS.forEach((question, index) => {
+    if (state.answers[index] === question.a) {
+      correct += 1;
+    }
+  });
+  return { correct, total: QUESTIONS.length };
+}
+
+function startExam() {
+  clearDelays();
+  const base = 60 * 10;
+  const startingTime = state.accom ? Math.floor(base * 1.5) : base;
+  updateState((prev) => {
+    const next = cloneState(prev);
+    next.current = 0;
+    next.view = "test";
+    next.timeLeft = startingTime;
+    return next;
+  });
+}
+
+function goToQuestion(targetIndex) {
+  if (targetIndex < 0 || targetIndex >= QUESTIONS.length) {
+    return;
+  }
+  clearDelays();
+  scheduleAction(() => {
+    updateState((prev) => {
+      const next = cloneState(prev);
+      next.current = targetIndex;
+      next.view = "test";
+      return next;
+    });
+  });
+}
+
+function go(delta) {
+  const target = Math.max(0, Math.min(state.current + delta, QUESTIONS.length - 1));
+  if (target === state.current) {
+    return;
+  }
+  goToQuestion(target);
+}
+
+function openReview() {
+  clearDelays();
+  scheduleAction(() => {
+    updateState((prev) => {
+      const next = cloneState(prev);
+      next.view = "review";
+      return next;
+    });
+  });
+}
+
+function finishOrAdvance() {
+  clearDelays();
+  const isLastQuestion = state.current >= QUESTIONS.length - 1;
+  scheduleAction(() => {
+    if (isLastQuestion) {
+      updateState((prev) => {
+        const next = cloneState(prev);
+        next.view = "results";
+        next.timeLeft = typeof next.timeLeft === "number" ? next.timeLeft : 0;
+        return next;
+      });
+      return;
+    }
+    updateState((prev) => {
+      const next = cloneState(prev);
+      next.current = Math.min(QUESTIONS.length - 1, next.current + 1);
+      return next;
+    });
+  });
+}
+
+function toggleMark(index) {
+  updateState((prev) => {
+    const next = cloneState(prev);
+    const currentlyMarked = !!next.marked[index];
+    if (currentlyMarked) {
+      delete next.marked[index];
+    } else {
+      next.marked[index] = true;
+    }
+    return next;
+  });
+}
+
+function chooseAnswer(questionIndex, choiceIndex) {
+  updateState((prev) => {
+    const next = cloneState(prev);
+    next.answers[questionIndex] = choiceIndex;
+    return next;
+  });
+}
+
+function resetToIntro() {
+  clearDelays();
+  if (timerHandle) {
+    window.clearTimeout(timerHandle);
+    timerHandle = null;
+  }
+  updateState((prev) => {
+    const next = cloneState(prev);
+    next.view = "intro";
+    next.timeLeft = null;
+    return next;
+  });
+}
+
+function el(tag, props = {}, ...children) {
+  const element = document.createElement(tag);
+  const {
+    className,
+    text,
+    html,
+    attrs,
+    dataset,
+    onClick,
+    onChange,
+    onInput,
+    ...rest
+  } = props;
+
+  if (className) {
+    element.className = className;
+  }
+
+  if (text !== undefined) {
+    element.textContent = text;
+  }
+
+  if (html !== undefined) {
+    element.innerHTML = html;
+  }
+
+  if (attrs) {
+    Object.entries(attrs).forEach(([key, value]) => {
+      element.setAttribute(key, value);
+    });
+  }
+
+  if (dataset) {
+    Object.entries(dataset).forEach(([key, value]) => {
+      element.dataset[key] = value;
+    });
+  }
+
+  if (typeof onClick === "function") {
+    element.addEventListener("click", onClick);
+  }
+
+  if (typeof onChange === "function") {
+    element.addEventListener("change", onChange);
+  }
+
+  if (typeof onInput === "function") {
+    element.addEventListener("input", onInput);
+  }
+
+  Object.entries(rest).forEach(([key, value]) => {
+    if (key in element && value !== undefined) {
+      element[key] = value;
+    }
   });
 
-  periodicBridgeCells.forEach((bridge) => {
-    const bridgeEl = document.createElement("div");
-    bridgeEl.className = "periodic-table__bridge";
-    bridgeEl.innerHTML = `<span>${bridge.label}</span><span>${bridge.caption}</span>`;
-    bridgeEl.style.gridColumn = bridge.column;
-    bridgeEl.style.gridRow = bridge.row;
-    fragment.appendChild(bridgeEl);
+  children.forEach((child) => {
+    if (child === null || child === undefined) {
+      return;
+    }
+    element.appendChild(
+      typeof child === "string" ? document.createTextNode(child) : child
+    );
   });
 
-  const createElementCell = (element) => {
-    const cell = document.createElement("div");
-    cell.className = "periodic-table__element";
-    cell.style.gridColumn = element.column;
-    cell.style.gridRow = element.row;
-    cell.innerHTML = `
-      <span class="periodic-table__number">${element.number}</span>
-      <span class="periodic-table__symbol">${element.symbol}</span>
-      <span class="periodic-table__name">${element.name}</span>
-    `;
-    return cell;
+  return element;
+}
+
+function renderIntro() {
+  const shell = el("div", { className: "rc-shell" });
+  const topbar = el(
+    "div",
+    { className: "rc-topbar" },
+    el("button", { className: "rc-topbar__button", attrs: { "aria-label": "Close" } }, "×"),
+    el(
+      "div",
+      { className: "rc-topbar__title" },
+      el("div", { className: "rc-topbar__title-main", text: "Bootcamp.com | OAT" }),
+      el("div", { className: "rc-topbar__title-sub", text: "Reading Comprehension Test 1" })
+    ),
+    el("div", { className: "rc-topbar__time", html: "&nbsp;" })
+  );
+
+  const delayToggle = el(
+    "button",
+    {
+      className: "rc-toggle",
+      dataset: { active: state.delayOn ? "true" : "false" },
+      attrs: { type: "button", "aria-pressed": String(state.delayOn) },
+      onClick: () => {
+        updateState({ delayOn: !state.delayOn });
+      }
+    },
+    el("span", { className: "rc-toggle__thumb" })
+  );
+
+  const accomToggle = el(
+    "button",
+    {
+      className: "rc-toggle",
+      dataset: { active: state.accom ? "true" : "false" },
+      attrs: { type: "button", "aria-pressed": String(state.accom) },
+      onClick: () => {
+        updateState({ accom: !state.accom });
+      }
+    },
+    el("span", { className: "rc-toggle__thumb" })
+  );
+
+  const bodyInner = el(
+    "div",
+    { className: "rc-body__inner" },
+    el(
+      "div",
+      { style: "width: 100%;" },
+      el(
+        "div",
+        { className: "rc-intro-card" },
+        el(
+          "h2",
+          { text: "This is Reading Comprehension Test 1. Read this before starting:" }
+        ),
+        el(
+          "ol",
+          {},
+          el("li", { text: `You have 10 minutes to finish ${QUESTIONS.length} questions.` }),
+          el("li", { text: "You can review questions before ending the section." }),
+          el("li", { text: "Your score analysis appears after finishing." })
+        ),
+        el("p", { text: "Click NEXT to continue." })
+      ),
+      el("h3", { className: "rc-section-heading", text: "Test Settings" }),
+      el(
+        "div",
+        { className: "rc-settings-list" },
+        el(
+          "div",
+          { className: "rc-setting" },
+          delayToggle,
+          el(
+            "div",
+            { html: '<span class="font-semibold">Prometric Delay:</span> Adds a ~2 second delay on navigation and review.' }
+          )
+        ),
+        el(
+          "div",
+          { className: "rc-setting" },
+          accomToggle,
+          el(
+            "div",
+            { html: '<span class="font-semibold">Time Accommodations:</span> 1.5x time if enabled.' }
+          )
+        )
+      )
+    )
+  );
+
+  const body = el("div", { className: "rc-body" }, bodyInner);
+
+  const footer = el(
+    "div",
+    { className: "rc-footer-bar" },
+    el(
+      "button",
+      {
+        className: "rc-button",
+        attrs: { type: "button" },
+        onClick: startExam
+      },
+      "NEXT"
+    )
+  );
+
+  shell.append(topbar, body, footer);
+  return shell;
+}
+
+function renderTest() {
+  const question = QUESTIONS[state.current];
+  const passage = question.passageId ? PASSAGES[question.passageId] : null;
+  const shell = el("div", { className: "rc-shell" });
+
+  const topbar = el(
+    "div",
+    { className: "rc-topbar" },
+    el("div", { className: "rc-topbar__title-main", text: `Question ${state.current + 1} of ${QUESTIONS.length}` }),
+    el("div", { className: "rc-topbar__title-sub", text: "Reading Comprehension — Sample" }),
+    el("div", {
+      className: "rc-topbar__time",
+      text: `Time remaining: ${state.timeLeft !== null ? fmtMMSS(state.timeLeft) : "--:--"}`
+    })
+  );
+
+  const choices = el("div", { className: "rc-choice-list" });
+
+  question.c.forEach((choice, index) => {
+    const label = el("label", { className: "rc-choice" });
+    const input = el("input", {
+      type: "radio",
+      name: `question-${state.current}`,
+      checked: state.answers[state.current] === index,
+      onChange: () => chooseAnswer(state.current, index)
+    });
+    const span = el("span", { text: `${String.fromCharCode(65 + index)}. ${choice}` });
+    label.append(input, span);
+    choices.appendChild(label);
+  });
+
+  const questionCard = el(
+    "div",
+    { className: "rc-test-card" },
+    state.marked[state.current]
+      ? el("span", { className: "rc-marked-flag", text: "MARKED" })
+      : null,
+    el("div", { className: "rc-question-stem", text: question.stem }),
+    choices,
+    passage
+      ? el(
+          "div",
+          { className: "rc-passage" },
+          el("div", { className: "rc-passage__title", text: passage.title }),
+          el(
+            "div",
+            { className: "rc-passage__content" },
+            ...passage.content.map((paragraph) => el("p", { text: paragraph }))
+          )
+        )
+      : null,
+    el("p", { className: "rc-instruction", text: "Click NEXT to continue." })
+  );
+
+  const body = el("div", { className: "rc-body rc-body--test" }, el("div", { className: "rc-test-area" }, questionCard));
+
+  const previousButton = el(
+    "button",
+    {
+      className: "rc-button rc-button--secondary",
+      attrs: { type: "button" },
+      disabled: state.current === 0,
+      onClick: () => go(-1)
+    },
+    "PREVIOUS"
+  );
+
+  const nextButton = el(
+    "button",
+    {
+      className: "rc-button",
+      attrs: { type: "button" },
+      onClick: finishOrAdvance
+    },
+    state.current < QUESTIONS.length - 1 ? "NEXT" : "END SECTION"
+  );
+
+  const markButton = el(
+    "button",
+    {
+      className: state.marked[state.current]
+        ? "rc-button rc-button--mark rc-button--marked"
+        : "rc-button rc-button--mark",
+      attrs: { type: "button" },
+      onClick: () => toggleMark(state.current)
+    },
+    "MARK"
+  );
+
+  const reviewButton = el(
+    "button",
+    {
+      className: "rc-button rc-button--secondary",
+      attrs: { type: "button" },
+      onClick: openReview
+    },
+    "REVIEW"
+  );
+
+  const bottomBar = el(
+    "div",
+    { className: "rc-bottom-bar" },
+    el("div", { className: "rc-bottom-group" }, previousButton),
+    el("div", {}, nextButton),
+    el("div", { className: "rc-bottom-group" }, markButton, reviewButton)
+  );
+
+  shell.append(topbar, body, bottomBar);
+  return shell;
+}
+
+function renderReview() {
+  const shell = el("div", { className: "rc-shell" });
+  const topbar = el(
+    "div",
+    { className: "rc-topbar" },
+    el("button", { className: "rc-topbar__button", attrs: { "aria-label": "Close" } }, "×"),
+    el(
+      "div",
+      { className: "rc-topbar__title" },
+      el("div", { className: "rc-topbar__title-main", text: "Bootcamp.com | OAT" }),
+      el("div", { className: "rc-topbar__title-sub", text: "Review Questions" })
+    ),
+    el("div", {
+      className: "rc-topbar__time",
+      text: `Time remaining: ${fmtMMSS(state.timeLeft ?? 0)}`
+    })
+  );
+
+  const rows = QUESTIONS.map((_, index) => ({
+    index,
+    name: `Question ${index + 1}`,
+    isMarked: !!state.marked[index],
+    isDone: state.answers[index] !== undefined,
+    isSkipped: state.answers[index] === undefined
+  }));
+
+  const reviewList = el("div", { className: "rc-review-list" });
+  rows.forEach((row) => {
+    const button = el(
+      "button",
+      { className: "rc-review-row", attrs: { type: "button" } },
+      el(
+        "div",
+        { className: "rc-review-cell" },
+        el(
+          "svg",
+          {
+            attrs: {
+              width: "14",
+              height: "14",
+              viewBox: "0 0 24 24",
+              "aria-hidden": "true"
+            }
+          },
+          el("path", {
+            attrs: {
+              fill: "currentColor",
+              d: "M6 2h9l5 5v15a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2zm8 1v5h5"
+            }
+          })
+        ),
+        el("span", { text: row.name })
+      ),
+      el("div", { className: "rc-review-cell", text: row.isMarked ? "Yes" : "" }),
+      el("div", { className: "rc-review-cell", text: row.isDone ? "Yes" : "" }),
+      el("div", { className: "rc-review-cell", text: row.isSkipped ? "Yes" : "" })
+    );
+    button.addEventListener("click", () => goToQuestion(row.index));
+    reviewList.appendChild(button);
+  });
+
+  const table = el(
+    "div",
+    { className: "rc-review-table" },
+    el(
+      "div",
+      { className: "rc-review-header" },
+      el("div", { text: "Name" }),
+      el("div", { text: "Marked" }),
+      el("div", { text: "Completed" }),
+      el("div", { text: "Skipped" })
+    ),
+    reviewList
+  );
+
+  const body = el(
+    "div",
+    { className: "rc-body" },
+    el("div", { className: "rc-review-container" }, table)
+  );
+
+  const findFirstIndex = (predicate) => {
+    const match = rows.find(predicate);
+    return match ? match.index : null;
   };
 
-  periodicMainElements
-    .concat(periodicLanthanides)
-    .concat(periodicActinides)
-    .sort((a, b) => a.row - b.row || a.column - b.column)
-    .forEach((element) => {
-      fragment.appendChild(createElementCell(element));
+  const reviewMarked = el(
+    "button",
+    {
+      className: "rc-button",
+      attrs: { type: "button" },
+      onClick: () => {
+        const index = findFirstIndex((row) => row.isMarked);
+        if (index !== null) {
+          goToQuestion(index);
+        }
+      }
+    },
+    "REVIEW MARKED"
+  );
+
+  const reviewAll = el(
+    "button",
+    {
+      className: "rc-button",
+      attrs: { type: "button" },
+      onClick: () => goToQuestion(0)
+    },
+    "REVIEW ALL"
+  );
+
+  const reviewIncomplete = el(
+    "button",
+    {
+      className: "rc-button",
+      attrs: { type: "button" },
+      onClick: () => {
+        const index = findFirstIndex((row) => !row.isDone);
+        if (index !== null) {
+          goToQuestion(index);
+        }
+      }
+    },
+    "REVIEW INCOMPLETE"
+  );
+
+  const endButton = el(
+    "button",
+    {
+      className: "rc-button",
+      attrs: { type: "button" },
+      onClick: () => updateState({ view: "results" })
+    },
+    "END"
+  );
+
+  const footer = el(
+    "div",
+    { className: "rc-review-actions" },
+    el("div", { className: "rc-review-buttons" }, reviewMarked, reviewAll, reviewIncomplete),
+    endButton
+  );
+
+  shell.append(topbar, body, footer);
+  return shell;
+}
+
+function renderResults() {
+  const { correct, total } = calcScore();
+  const container = el(
+    "div",
+    { className: "rc-results" },
+    el("h1", { text: "Results" }),
+    el("p", { text: `Score: ${correct} / ${total} (${Math.round((correct / total) * 100)}%).` })
+  );
+
+  QUESTIONS.forEach((question, index) => {
+    const selected = state.answers[index];
+    const correctAnswer = question.a;
+    const isCorrect = selected === correctAnswer;
+
+    const item = el(
+      "div",
+      {
+        className: isCorrect ? "rc-result-item" : "rc-result-item rc-result-item--incorrect"
+      },
+      el("div", { className: "rc-result-stem", text: `${index + 1}. ${question.stem}` })
+    );
+
+    const list = el("ul", { className: "rc-result-choices" });
+    question.c.forEach((choice, choiceIndex) => {
+      let suffix = "";
+      if (choiceIndex === correctAnswer) {
+        suffix += " (correct)";
+      }
+      if (selected === choiceIndex && choiceIndex !== correctAnswer) {
+        suffix += " (your answer)";
+      }
+      const listItem = el("li", {
+        text: `${String.fromCharCode(65 + choiceIndex)}. ${choice}${suffix}`,
+        className: choiceIndex === correctAnswer ? "font-semibold" : ""
+      });
+      list.appendChild(listItem);
     });
 
-  container.appendChild(fragment);
+    item.appendChild(list);
+
+    if (state.marked[index]) {
+      item.appendChild(el("div", { className: "rc-mark-tag", text: "MARKED" }));
+    }
+
+    container.appendChild(item);
+  });
+
+  container.appendChild(
+    el(
+      "button",
+      {
+        className: "rc-button",
+        attrs: { type: "button" },
+        onClick: resetToIntro
+      },
+      "Back to Start"
+    )
+  );
+
+  return container;
 }
 
-function setupCalculator() {
-  const display = document.querySelector("[data-calculator-display]");
-  const keys = document.querySelector("[data-calculator-keys]");
-
-  if (!display || !keys) {
+function render() {
+  if (!root) {
     return;
   }
+  root.innerHTML = "";
 
-  renderCalculatorKeys(keys);
-  const calculator = new Calculator(display);
-
-  keys.addEventListener("click", (event) => {
-    const button = event.target.closest("button[data-action]");
-    if (!button) {
-      return;
-    }
-
-    const action = button.dataset.action;
-    const value = button.dataset.value;
-
-    switch (action) {
-      case "digit":
-        calculator.inputDigit(value);
-        break;
-      case "decimal":
-        calculator.inputDecimal();
-        break;
-      case "operator":
-        calculator.setOperator(value);
-        break;
-      case "equals":
-        calculator.calculateResult();
-        break;
-      case "sign":
-        calculator.toggleSign();
-        break;
-      case "percent":
-        calculator.percent();
-        break;
-      case "sqrt":
-        calculator.squareRoot();
-        break;
-      case "reciprocal":
-        calculator.reciprocal();
-        break;
-      case "clear-entry":
-        calculator.clearEntry();
-        break;
-      case "clear-all":
-        calculator.clearAll();
-        break;
-      case "backspace":
-        calculator.backspace();
-        break;
-      case "memory-store":
-        calculator.memoryStore();
-        break;
-      case "memory-recall":
-        calculator.memoryRecall();
-        break;
-      case "memory-clear":
-        calculator.memoryClear();
-        break;
-      case "memory-add":
-        calculator.memoryAdd();
-        break;
-      default:
-        break;
-    }
-  });
-}
-
-function setupExhibitModal() {
-  const modal = document.getElementById("periodic-table-modal");
-  const triggers = document.querySelectorAll("[data-exhibit-trigger]");
-  const dismiss = modal?.querySelector("[data-exhibit-dismiss]");
-  let lastActiveElement = null;
-
-  if (!modal) {
-    return;
+  let view;
+  switch (state.view) {
+    case "intro":
+      view = renderIntro();
+      break;
+    case "test":
+      view = renderTest();
+      break;
+    case "review":
+      view = renderReview();
+      break;
+    case "results":
+      view = renderResults();
+      break;
+    default:
+      view = renderIntro();
   }
 
-  const periodicTableContainer = modal.querySelector("#periodic-table");
-  if (periodicTableContainer && periodicTableContainer.childElementCount === 0) {
-    renderPeriodicTable(periodicTableContainer);
-  }
-
-  const openModal = () => {
-    lastActiveElement = document.activeElement instanceof HTMLElement ? document.activeElement : null;
-    modal.setAttribute("aria-hidden", "false");
-    const focusTarget = dismiss || modal;
-    focusTarget.focus({ preventScroll: true });
-  };
-
-  const closeModal = () => {
-    modal.setAttribute("aria-hidden", "true");
-    if (lastActiveElement && typeof lastActiveElement.focus === "function") {
-      lastActiveElement.focus({ preventScroll: true });
-    }
-  };
-
-  triggers.forEach((trigger) => {
-    trigger.addEventListener("click", () => openModal());
-  });
-
-  dismiss?.addEventListener("click", () => closeModal());
-
-  modal.addEventListener("click", (event) => {
-    if (event.target === modal) {
-      closeModal();
-    }
-  });
-
-  document.addEventListener("keydown", (event) => {
-    if (event.key === "Escape" && modal.getAttribute("aria-hidden") === "false") {
-      closeModal();
-    }
-  });
+  root.appendChild(view);
 }
 
-document.addEventListener("DOMContentLoaded", () => {
-  setupCalculator();
-  setupExhibitModal();
-});
+function init() {
+  loadProgress();
+  render();
+  scheduleTick();
+}
+
+if (root) {
+  init();
+}
