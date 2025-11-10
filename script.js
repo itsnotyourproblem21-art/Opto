@@ -136,6 +136,22 @@ function clearDelays() {
   delayHandles = [];
 }
 
+function exitToSubjectPage() {
+  clearDelays();
+  if (timerHandle) {
+    window.clearTimeout(timerHandle);
+    timerHandle = null;
+  }
+
+  const { referrer } = document;
+  if (referrer && referrer !== window.location.href) {
+    window.location.href = referrer;
+    return;
+  }
+
+  window.location.href = "/";
+}
+
 function scheduleAction(callback) {
   if (!state.delayOn) {
     callback();
@@ -400,7 +416,15 @@ function renderIntro() {
   const topbar = el(
     "div",
     { className: "rc-topbar" },
-    el("button", { className: "rc-topbar__button", attrs: { "aria-label": "Close" } }, "×"),
+    el(
+      "button",
+      {
+        className: "rc-topbar__button",
+        attrs: { "aria-label": "Close" },
+        onClick: exitToSubjectPage
+      },
+      "×"
+    ),
     el(
       "div",
       { className: "rc-topbar__title" },
@@ -620,7 +644,15 @@ function renderReview() {
   const topbar = el(
     "div",
     { className: "rc-topbar" },
-    el("button", { className: "rc-topbar__button", attrs: { "aria-label": "Close" } }, "×"),
+    el(
+      "button",
+      {
+        className: "rc-topbar__button",
+        attrs: { "aria-label": "Close" },
+        onClick: exitToSubjectPage
+      },
+      "×"
+    ),
     el(
       "div",
       { className: "rc-topbar__title" },
