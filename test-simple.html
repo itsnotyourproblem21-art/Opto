@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Server Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        .box {
+            background: white;
+            color: #333;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+        .success { color: #22c55e; font-weight: bold; }
+        .link { display: inline-block; margin: 10px; padding: 15px 30px; background: #3b82f6; color: white; text-decoration: none; border-radius: 5px; font-weight: bold; }
+        .link:hover { background: #2563eb; }
+    </style>
+</head>
+<body>
+    <div class="box">
+        <h1>🎉 Server Test - SUCCESS!</h1>
+        <p class="success">✅ Your Python HTTP server is running correctly!</p>
+        <p><strong>Server:</strong> Python 3 HTTP Server</p>
+        <p><strong>Port:</strong> 8080</p>
+        <p><strong>Status:</strong> Active</p>
+        
+        <hr style="margin: 20px 0;">
+        
+        <h2>📱 Your Applications:</h2>
+        <div>
+            <a href="/index.html" class="link">📖 Reading Comprehension Test</a>
+            <a href="/dashboard.html" class="link">📊 Dashboard</a>
+        </div>
+        
+        <hr style="margin: 20px 0;">
+        
+        <h3>Files Available:</h3>
+        <ul>
+            <li>✅ index.html - Main application</li>
+            <li>✅ dashboard.html - Dashboard view</li>
+            <li>✅ script.js - JavaScript functionality</li>
+            <li>✅ styles.css - Styling</li>
+            <li>✅ genchem_tests.js - Chemistry tests</li>
+            <li>✅ init_tests.js - Initialization</li>
+        </ul>
+        
+        <p style="margin-top: 20px; font-size: 14px; color: #666;">
+            If you're seeing this page, your server is working perfectly! 
+            Click the links above to access your applications.
+        </p>
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('✅ JavaScript is working!');
+            console.log('✅ Page loaded successfully!');
+            console.log('Server time:', new Date().toLocaleString());
+        });
+    </script>
+</body>
+</html>
