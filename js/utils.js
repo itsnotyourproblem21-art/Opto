@@ -6,6 +6,7 @@ import {
 	TOTAL_QUESTIONS_READING,
 	TOTAL_QUESTIONS_PHYSICS,
 	TOTAL_QUESTIONS_QUANTITATIVE,
+	SUBJECT_COLOR_MAP,
 } from './constants.js';
 
 // --- Score Maps ---

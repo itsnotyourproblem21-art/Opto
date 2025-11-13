@@ -142,9 +142,9 @@ function renderSidebar() {
 	sidebar.innerHTML = `
 		<div class="sidebar-header">
 			<h1 class="sidebar-title">🎓 OAT Prep</h1>
-			<button class="sidebar-toggle" onclick="window.app.toggleSidebar()">
-				${state.isSidebarCollapsed ? '→' : '←'}
-			</button>
+			<a href="index.html" class="home-link" title="Back to Reading Test">
+				🏠
+			</a>
 		</div>
 		
 		<nav class="sidebar-nav">

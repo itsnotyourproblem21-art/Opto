@@ -5,9 +5,30 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>OAT Reading Comprehension Sample</title>
     <link rel="stylesheet" href="styles.css" />
+    <style>
+      .dashboard-link {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        background: linear-gradient(135deg, #4f72c2 0%, #2e5cb8 100%);
+        color: white;
+        padding: 12px 24px;
+        border-radius: 30px;
+        text-decoration: none;
+        font-weight: 600;
+        box-shadow: 0 4px 12px rgba(79, 114, 194, 0.4);
+        transition: all 0.3s ease;
+        z-index: 1000;
+      }
+      .dashboard-link:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(79, 114, 194, 0.6);
+      }
+    </style>
   </head>
   <body>
     <div id="rc-app" class="rc-app"></div>
+    <a href="dashboard.html" class="dashboard-link">📊 View Dashboard</a>
     <script src="script.js" defer></script>
   </body>
 </html>
