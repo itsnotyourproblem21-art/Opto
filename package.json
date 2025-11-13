@@ -1,6 +1,7 @@
 {
   "name": "optofutureprep",
   "version": "1.0.0",
+  "type": "module",
   "description": "OAT Prep Application",
   "main": "index.js",
   "scripts": {
